@@ -50,35 +50,33 @@ function BuyBtnPressed()
 
         $queryUpdate = "UPDATE `car-info` SET Car_quantity= Car_quantity -1 where Car_id='" . $Car_id . "'";
         $queryInsert = "INSERT INTO card(Car_id,number_of_cars,user_id) VALUES('" . $Car_id . "',1,'" . $user_id . "') ON DUPLICATE KEY UPDATE number_of_cars = number_of_cars + 1 ";
+        var_dump($queryUpdate);
+        echo "<br>";
+        var_dump($queryInsert);
         if (mysqli_query($conn, $queryInsert)) {
             var_dump($queryInsert);
-            header('Location:' . $_SERVER['PHP_SELF'] . '');
-        }
-        if (mysqli_query($conn, $queryUpdate)) {
+            mysqli_query($conn, $queryUpdate);
             header('Location:' . $_SERVER['PHP_SELF'] . '');
         }
     }
 }
 function plusPressed()
 {
-
-
     $conn = mysqli_connect('localhost', 'root', '123456', 'cars');
-    $query2 = mysqli_query($conn, "SELECT * FROM  `users` where `user_email`='" . $_SESSION['something'] . "'");
-
     $Car_id = mysqli_real_escape_string($conn, $_POST['id1']);
+    $query2 = mysqli_query($conn, "SELECT * FROM  `users` where `user_email`='" . $_SESSION['something'] . "'");
+    $user = mysqli_fetch_all($query2, MYSQLI_ASSOC);
+    $user_id = $user[0]['user_id'];
     $qunatity = mysqli_query($conn, "SELECT Car_quantity  FROM `car-info` where Car_id='" . $Car_id . "'");
     $fetchQuantity = mysqli_fetch_all($qunatity, MYSQLI_ASSOC);
     if ($fetchQuantity[0]['Car_quantity'] > 0) {
         $queryUpdate = "UPDATE `car-info` SET Car_quantity= Car_quantity -1 where Car_id='" . $Car_id . "'";
-
-        $queryInsert = "INSERT INTO card(Car_id,number_of_cars) VALUES('$Car_id',1) ON DUPLICATE KEY UPDATE number_of_cars = number_of_cars + 1 ";
+        $queryInsert = "INSERT INTO card(Car_id,number_of_cars,user_id) VALUES('$Car_id',1,'" . $user_id . "') ON DUPLICATE KEY UPDATE number_of_cars = number_of_cars + 1 ";
+        var_dump($queryUpdate);
+        echo "<br>";
+        var_dump($queryInsert);
         if (mysqli_query($conn, $queryInsert)) {
-            header('Location:' . $_SERVER['PHP_SELF'] . '');
-        } else {
-            echo 'ERROR' . mysqli_error($conn);
-        }
-        if (mysqli_query($conn, $queryUpdate)) {
+            mysqli_query($conn, $queryUpdate);
             header('Location:' . $_SERVER['PHP_SELF'] . '');
         } else {
             echo 'ERROR' . mysqli_error($conn);
@@ -87,37 +85,35 @@ function plusPressed()
 }
 function minusPressed()
 {
-
     $conn = mysqli_connect('localhost', 'root', '123456', 'cars');
-    $query2 = mysqli_query($conn, "SELECT * FROM  `users` where `user_email`='" . $_SESSION['something'] . "'");
-
     $Car_id = $_POST['id2'];
+    $query2 = mysqli_query($conn, "SELECT * FROM  `users` where `user_email`='" . $_SESSION['something'] . "'");
+    $user = mysqli_fetch_all($query2, MYSQLI_ASSOC);
+    $user_id = $user[0]['user_id'];
     $number_of_cars = mysqli_query($conn, "SELECT `number_of_cars` FROM card WHERE `Car_id`='" . $Car_id . "'");
     $result_number =  mysqli_fetch_all($number_of_cars, MYSQLI_ASSOC);
     print_r($result_number);
     if ($result_number[0]["number_of_cars"] > 1) {
         var_dump($number_of_cars);
         $queryUpdate = "UPDATE `car-info` SET Car_quantity= Car_quantity + 1 where Car_id='" . $Car_id . "'";
-        $queryInsert = "INSERT INTO card(Car_id,number_of_cars) VALUES('$Car_id',1) ON DUPLICATE KEY UPDATE number_of_cars = number_of_cars - 1 ";
+        $queryInsert = "INSERT INTO card(Car_id,number_of_cars,user_id) VALUES('$Car_id',1,'" . $user_id . "') ON DUPLICATE KEY UPDATE number_of_cars = number_of_cars - 1 ";
+        var_dump($queryUpdate);
+        echo "<br>";
+        var_dump($queryInsert);
         if (mysqli_query($conn, $queryInsert)) {
-            header('Location:' . $_SERVER['PHP_SELF'] . '');
-        } else {
-            echo 'ERROR' . mysqli_error($conn);
-        }
-        if (mysqli_query($conn, $queryUpdate)) {
+            mysqli_query($conn, $queryUpdate);
             header('Location:' . $_SERVER['PHP_SELF'] . '');
         } else {
             echo 'ERROR' . mysqli_error($conn);
         }
     } else {
         $queryUpdate = "UPDATE `car-info` SET Car_quantity= Car_quantity + 1 where Car_id='" . $Car_id . "'";
-        $queryDelete = "DELETE FROM card WHERE `Car_id`='$Car_id'";
+        $queryDelete = "DELETE FROM card WHERE `Car_id`='$Car_id' and user_id='" . $user_id . "'";
+        var_dump($queryUpdate);
+        echo "<br>";
+        var_dump($queryDelete);
         if (mysqli_query($conn, $queryDelete)) {
-            header('Location:' . $_SERVER['PHP_SELF'] . '');
-        } else {
-            echo 'ERROR' . mysqli_error($conn);
-        }
-        if (mysqli_query($conn, $queryUpdate)) {
+            mysqli_query($conn, $queryUpdate);
             header('Location:' . $_SERVER['PHP_SELF'] . '');
         } else {
             echo 'ERROR' . mysqli_error($conn);
